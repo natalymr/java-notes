@@ -59,9 +59,9 @@ public @interface Name {
 
 * `@Retention` позволяет указать жизненный цикл аннотации: будет она присутствовать только в исходном коде, в скомпилированном файле, ли она будет также видна и в процессе выполнения
 
-> Аннотация  `@Retentionпозволяет`  указать,  в  какой  момент  жизни  программного  кода  будет  доступна  аннотация  
+> Аннотация  `@Retention` позволяет  указать,  в  какой  момент  жизни  программного  кода  будет  доступна  аннотация  
 >
-> `java.lang.annotation.RetentionPolicy`
+> пакет - `java.lang.annotation.RetentionPolicy`
 >
 > **SOURCE** - аннотация  доступна  только  в  исходном  коде  и  сбрасывается  во  время  создания  `.class` файла
 >
@@ -125,7 +125,7 @@ public @interface Name {
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Mammal {
 	String  sound();
-	int color()  default0xffffff;
+	int color()  default 0xffffff;
 }
 
 // использование
@@ -145,14 +145,14 @@ class Giraffe {}
 }
 
 @interface History {
-	Version[]  value()  default{};
+	Version[]  value()  default {};
 }
 
 @History({
 	@Version(1),
-	@Version(value  =  2,  author  =  "Jim  Smith")
+	@Version(value=2,  author="Jim  Smith")
 })
-class MyClass{}
+class MyClass {}
 ```
 
 **Пример №3**
@@ -166,7 +166,7 @@ interface Serializer<T>  {
 
 class MySerializer implements Serializer<MyClass>  {
 	public void toStream(MyClass obj, OutputStream out) throws IOException {
-		thrownewUnsupportedOperationException();
+		throw new UnsupportedOperationException();
 	}
 }
 @interface SerializedBy {
@@ -186,32 +186,31 @@ class MyClass {}
 ```java
 // аннотации
 @Target(value=ElementType.METHOD)
-@Retention(value= RetentionPolicy.RUNTIME)
+@Retention(value=RetentionPolicy.RUNTIME)
 public @interface StartObject {    
 }
 
 @Target(value=ElementType.METHOD)
-@Retention(value= RetentionPolicy.RUNTIME)
+@Retention(value=RetentionPolicy.RUNTIME)
 public @interface StopObject {    
 }
 
 @Target(value=ElementType.TYPE)
-@Retention(value= RetentionPolicy.RUNTIME)
+@Retention(value=RetentionPolicy.RUNTIME)
 public @interface ControlledObject {    
      String name();    
 }
 
 // определим класс
-
 @ControlledObject(name="biscuits")
 public class Cookies {    
     
      @StartObject
-     public void createCookie(){
+     public void createCookie() {
        //бизнес логика
      }    
      @StopObject
-     public void stopCookie(){
+     public void stopCookie() {
        //бизнес логика
      }
 }
@@ -225,19 +224,30 @@ Class cl = Class.forName("org.annotate.test.classes.Cookies");
 // далее, через механизм reflection мы получаем доступ к полям и аннотациям класса
 
 // проверим наличие аннотированных методов в классе и аннотации на самом классе:
-if(!cl.isAnnotationPresent(ControlledObject.class)){
-       System.err.println("no annotation");
-       } else {
-          System.out.println("class annotated ; name  -  " + cl.getAnnotation(ControlledObject.class));
-       }        
-boolean hasStart=false;
-boolean hasStop=false;        
+if(!cl.isAnnotationPresent(ControlledObject.class)) {
+    System.err.println("no annotation");
+} else {
+    System.out.println("class annotated ; name  -  " + cl.getAnnotation(ControlledObject.class));
+}        
+
+boolean hasStart = false;
+boolean hasStop = false;        
 Method[] method = cl.getMethods();
-for(Method md: method){
-       if(md.isAnnotationPresent(StartObject.class)) {hasStart=true;}
-       if(md.isAnnotationPresent(StopObject.class)) {hasStop=true;}
-       if(hasStart && hasStop){break;}
+
+for(Method md: method) {
+       if(md.isAnnotationPresent(StartObject.class)) {
+       		hasStart=true;
+       }
+       
+       if(md.isAnnotationPresent(StopObject.class)) {
+       		hasStop=true;
+       }
+       
+       if(hasStart && hasStop) {
+       		break;
+       }
 }
+
 System.out.println("Start annotaton  - " + hasStart + ";  Stop annotation  - " + hasStop );
 ```
 
