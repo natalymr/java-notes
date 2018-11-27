@@ -256,4 +256,5 @@ System.out.println("Start annotaton  - " + hasStart + ";  Stop annotation  - " +
 
 Запустив, на выходе мы получим:
 > Start annotaton — true; Stop annotation — true.
+
 Если попробовать убрать одну из аннотаций, то вывод сообщит о несоответствии требованиям
