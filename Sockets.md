@@ -82,18 +82,21 @@ is.read(responseBytes);
 
 * **public ServerSocket(int port) throws IOException** - этот метод создает сокет, который привязан к указанному порту. Если метод
 бросил исключение, это значит, что другое приложение слушает указанный порт.
+
 * **public ServerSocket(int port, int backlog) throws IOException** - этот метод аналогичен предыдущему. `backlog` - указывает
 максимальное количество клиентов, которые могут храниться в очереди на подключение.
+
 * **public ServerSocket(int port, int backlog, InetAddress address) throws IOException** - этот метод аналогичен предыдущему. 
 `adress` - это локальный IP-адрес, к которому должен быть привязан созданный сокет. Данный конструктор используется для сервером,
 имеющих несколько IP-адресов.
+
 * **public ServerSocket() throws IOException** - создается сокет, который не привязан ни к чему. Для подключения необходимо использовать метод `bind()`.
 
 ```java
 // создаем сервер-сокет 
 ServerSocket server  =  new  ServerSocket(11111);
 
-// создаем клиент-сокет
+// подключаемся к клиент-сокету
 Socket  socket =  server.accept();
 
 // создаем стрим, чтобы получать данные
@@ -106,5 +109,62 @@ os.write(responseBytes);
 os.flush(); 
 ```
 
+другой пример, [источник](http://cs.lmu.edu/~ray/notes/javanetexamples/):
+```java
+/**
+ * A TCP server that runs on port 9090.  When a client connects, it
+ * sends the client the current date and time, then closes the
+ * connection with that client.  Arguably just about the simplest
+ * server you can write.
+ */
+public class DateServer {
+
+    /**
+     * Runs the server.
+     */
+    public static void main(String[] args) throws IOException {
+        ServerSocket listener = new ServerSocket(9090);
+        try {
+            while (true) {
+                Socket socket = listener.accept();
+                try {
+                    PrintWriter out =
+                        new PrintWriter(socket.getOutputStream(), true);
+                    out.println(new Date().toString());
+                } finally {
+                    socket.close();
+                }
+            }
+        }
+        finally {
+            listener.close();
+        }
+    }
+}
+```
+
 ### Обработка большого количества клиентов
-см. NIO.md
+
+1. Обрабатываем запросы от всех клиентов в одном потоке:
+	```
+	while  (true)  {
+		accept  a  connection;
+		deal  with  the  client;
+	}
+	```
+2. Работаем с каждым клиентом в отдельном, специально созданном потоке (стоит переиспользовать потоки)
+	```
+	while  (true)  {
+		accept  a  connection;
+		create  a  thread  to  deal  with  the  client;
+	}
+	```
+3. Для работы с каждым клиентом создаем новое задание. Отправляем его в `ThreadPool`
+	```
+	while  (true)  {
+		accept  connection;
+		create  task  which  will  deal  with  the  client;
+	}
+	```
+
+дальнейшую идеалогию работы с большим количеством клиентов см. NIO.md
