@@ -10,7 +10,7 @@
 
 
 
-![FJ scheme](./join-fork-image001.png)
+![FJ scheme](./pictures/join-fork-image001.png)
 
 
 Псевдовод для данной модели может быть следующий:

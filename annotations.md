@@ -1,4 +1,4 @@
-## Annotations
+# Annotations
 
 **Аннотации** - в языке Java специальная форма синтаксических метаданных, которая может быть добавлена в исходный код.
 
@@ -57,15 +57,204 @@ public @interface Name {
 
 * можно задать поле обязательным, со значением по умолчанию через `default`
 
-* `@Retention` позволяет указать жизненный цикл аннотации: будет она присутствовать только в исходном коде, в скомпилированном файле, ли она будет также видна и в процессе выполнения
+#### @Retention
+* `@Retention` **позволяет указать жизненный цикл аннотации: будет она присутствовать только в исходном коде, в скомпилированном файле, ли она будет также видна и в процессе выполнения**
 
-* `@Target` указывает, что именно мы можем пометить этой аннотацией, это может быть поле, метод, тип и т.д. 
+> Аннотация  `@Retention` позволяет  указать,  в  какой  момент  жизни  программного  кода  будет  доступна  аннотация  
+>
+> пакет - `java.lang.annotation.RetentionPolicy`
+>
+> **SOURCE** - аннотация  доступна  только  в  исходном  коде  и  сбрасывается  во  время  создания  `.class` файла
+>
+> **CLASS** - аннотация  хранится  в  `.class` файле,  но  недоступна  во  время  выполнения  программы
+>
+> **RUNTIME** - аннотация  хранится  в  `.class` файле  и  доступна  во  время  выполнения  программы
+
+#### @Target
+* `@Target` **указывает, что именно мы можем пометить этой аннотацией, это может быть поле, метод, тип и т.д.**
+
+> Аннотацией  `@Target` указывается,  какой  элемент  программы  будет  использоваться  аннотацией
+>
+> **PACKAGE** - назначением  является  целый  пакет  (package)
+>
+> **TYPE** - класс,  интерфейс,  `enum` или  другая  аннотация
+>
+> **METHOD** - 	метод  класса,  но  не  конструктор  (для  конструкторов  есть  отдельный  тип  `CONSTRUCTOR`)
+>
+> **PARAMETER** - параметр  метода
+>
+> **CONSTRUCTOR** - конструктор
+>
+> **FIELD** - поля-свойства  класса
+>
+> **LOCAL_VARIABLE** - локальная  переменная  (данная  аннотация  не  может  быть  прочитана  во  время  выполнения  программы)
+>
+> **ANNOTATION_TYPE** - другая  аннотация  (мета-аннотация)
+>
+> ```java
+> @Target({ ElementType.TYPE, ElementType.TYPE })
+> ```
 
 ### Ограничения
 
 Несколько  ограничений на методы из аннотаций:
+
 * объявляемый метод не должен иметь параметров
 
 * метод  должен  возвращать  одно  из  следующих  типов:  любой  примитивный  тип,  `String`,  `Class`,  `enum` или  массив  указанных  типов
 
 * объявление  метода  не  должно  содержать  ключевое  слово  `throws`
+
+### Использование
+
+Аннотации  могут  использоваться  со  следующими  элементами  программы:
+* класс,  интерфейс  или  перечисления  (`enum`)
+* свойства  (поля)  классов
+* методы,  конструкторы  и  параметры  методов
+* локальная  переменная
+* блок  `catch`
+* пакет  (java package)
+* другая  аннотация
+
+### Примеры
+
+**Пример №1**
+
+Мета-информация о классе.
+
+```java
+// определение аннотации
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Mammal {
+	String  sound();
+	int color()  default 0xffffff;
+}
+
+// использование
+@Mammal(color=0xFFA844, sound="uuuu")
+class Giraffe {}
+```
+
+
+**Пример №2**
+
+Логгирование разработки класса.
+
+```java
+@interface Version {
+	int value();
+	String  author()  default "UNKNOWN";
+}
+
+@interface History {
+	Version[]  value()  default {};
+}
+
+@History({
+	@Version(1),
+	@Version(value=2,  author="Jim  Smith")
+})
+class MyClass {}
+```
+
+**Пример №3**
+
+Мета-информация о классе, а именно, какой именно сериализатор использовать.
+
+```java
+interface Serializer<T>  {
+	void toStream(T obj, OutputStream out) throws IOException;
+}
+
+class MySerializer implements Serializer<MyClass>  {
+	public void toStream(MyClass obj, OutputStream out) throws IOException {
+		throw new UnsupportedOperationException();
+	}
+}
+@interface SerializedBy {
+	Class<? extends Serializer> value();
+}
+
+@SerializedBy(MySerializer.class)
+class MyClass {}
+```
+
+**Пример №4**
+
+[источник](https://habr.com/post/139736/)
+
+Представим себе, что у нас есть какой-то самодельный проект, который на вход получает класс, специально заанотированный, чтобы проект мог управлять жизненным циклом объектов этого класса, и пусть там будут аннотации `StartObject`, `StopObject` для описания методов класса, и `ControlledObject` для описания самого класса. Последней аннотации дадим еще поле `name`, путь там хранится якобы имя для поиска.
+
+```java
+// аннотации
+@Target(value=ElementType.METHOD)
+@Retention(value=RetentionPolicy.RUNTIME)
+public @interface StartObject {    
+}
+
+@Target(value=ElementType.METHOD)
+@Retention(value=RetentionPolicy.RUNTIME)
+public @interface StopObject {    
+}
+
+@Target(value=ElementType.TYPE)
+@Retention(value=RetentionPolicy.RUNTIME)
+public @interface ControlledObject {    
+     String name();    
+}
+
+// определим класс
+@ControlledObject(name="biscuits")
+public class Cookies {    
+    
+     @StartObject
+     public void createCookie() {
+       //бизнес логика
+     }    
+     @StopObject
+     public void stopCookie() {
+       //бизнес логика
+     }
+}
+
+// напишем модуль, проверяющий подходит ли класс для загрузки в наш гипотетический проект или нет
+
+// для того, чтобы работать с классом, сначала необходимо загрузить класс в контекст приложения 
+// используем:
+Class cl = Class.forName("org.annotate.test.classes.Cookies");
+
+// далее, через механизм reflection мы получаем доступ к полям и аннотациям класса
+
+// проверим наличие аннотированных методов в классе и аннотации на самом классе:
+if(!cl.isAnnotationPresent(ControlledObject.class)) {
+    System.err.println("no annotation");
+} else {
+    System.out.println("class annotated ; name  -  " + cl.getAnnotation(ControlledObject.class));
+}        
+
+boolean hasStart = false;
+boolean hasStop = false;        
+Method[] method = cl.getMethods();
+
+for(Method md: method) {
+       if(md.isAnnotationPresent(StartObject.class)) {
+       		hasStart=true;
+       }
+       
+       if(md.isAnnotationPresent(StopObject.class)) {
+       		hasStop=true;
+       }
+       
+       if(hasStart && hasStop) {
+       		break;
+       }
+}
+
+System.out.println("Start annotaton  - " + hasStart + ";  Stop annotation  - " + hasStop );
+```
+
+Запустив, на выходе мы получим:
+> Start annotaton — true; Stop annotation — true.
+
+Если попробовать убрать одну из аннотаций, то вывод сообщит о несоответствии требованиям
