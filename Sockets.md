@@ -1,7 +1,7 @@
 ## Sockets
 
 Каждое приложение, использующее клиент-серверную парадигму, следует следующим принципам:
-1. Одна программа, сервер, блокируется, ожидая, пока к ней не подключится клиент
+1. Сервер блокируется, ожидая, пока к нему не подключится клиент
 2. Клиент подключается
 3. Сервер и клиент обмениваются информацией столько, сколько необходимо
 4. Сервер и клиент после этого оба прерывают соединение
@@ -25,9 +25,7 @@
 
 ```java
 try (DatagramSockets  =  new  DatagramSocket())  {
-	DatagramPacket p  =  new  DatagramPacket(buf,
-											 buf.length,
-										 	 remoteAddress);
+	DatagramPacket p  =  new  DatagramPacket(buf, buf.length, remoteAddress);
 	s.send(p);
 }
 ```
@@ -37,8 +35,7 @@ try (DatagramSockets  =  new  DatagramSocket())  {
 ```java
 try (DatagramSockets  =  new  DatagramSocket(port)) {
 	byte  []  buf =  new  byte  [1024];
-	DatagramPacket p  =  new  DatagramPacket(buf,
-				  							 buf.length);
+	DatagramPacket p  =  new  DatagramPacket(buf, buf.length);
 	s.receive(p);
 }
 ```
@@ -110,3 +107,4 @@ os.flush();
 ```
 
 ### Обработка большого количества клиентов
+см. NIO.md
