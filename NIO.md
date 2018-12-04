@@ -183,12 +183,13 @@ SelectionKey key = channel.register(selector, SelectionKey.OP_READ);
 какое именно событие вас интересует слушать у Channel-а через Selector.
 
 Какие бывают события-interest_set?
-| Событие | коректное написание | Oracle документация | 
+
+| Событие | корректное написание | Oracle документация | 
 |---------|---------------------|---------------------|
-| Connect | SelectionKey.OP_CONNECT | Operation-set bit for socket-connect operations. Suppose that a selection key's interest set contains OP_CONNECT at the start of a selection operation. If the selector detects that the corresponding socket channel is ready to complete its connection sequence, or has an error pending, then it will add OP_CONNECT to the key's ready set and add the key to its selected-key set. |
-| Accept | SelectionKey.OP_ACCEPT | Operation-set bit for socket-accept operations. Suppose that a selection key's interest set contains OP_ACCEPT at the start of a selection operation. If the selector detects that the corresponding server-socket channel is ready to accept another connection, or has an error pending, then it will add OP_ACCEPT to the key's ready set and add the key to its selected-key set. |
-| Read | SelectionKey.OP_READ | Operation-set bit for read operations. Suppose that a selection key's interest set contains OP_READ at the start of a selection operation. If the selector detects that the corresponding channel is ready for reading, has reached end-of-stream, has been remotely shut down for further reading, or has an error pending, then it will add OP_READ to the key's ready-operation set and add the key to its selected-key set. |
-| Write | SelectionKey.OP_WRITE | Operation-set bit for write operations. Suppose that a selection key's interest set contains OP_WRITE at the start of a selection operation. If the selector detects that the corresponding channel is ready for writing, has been remotely shut down for further writing, or has an error pending, then it will add OP_WRITE to the key's ready set and add the key to its selected-key set. |
+| Connect | SelectionKey.OP_CONNECT | Suppose that a selection key's interest set contains OP_CONNECT at the start of a selection operation. If the selector detects that the corresponding socket channel is ready to complete its connection sequence, or has an error pending, then it will add OP_CONNECT to the key's ready set and add the key to its selected-key set. |
+| Accept | SelectionKey.OP_ACCEPT | Suppose that a selection key's interest set contains OP_ACCEPT at the start of a selection operation. If the selector detects that the corresponding server-socket channel is ready to accept another connection, or has an error pending, then it will add OP_ACCEPT to the key's ready set and add the key to its selected-key set. |
+| Read | SelectionKey.OP_READ | Suppose that a selection key's interest set contains OP_READ at the start of a selection operation. If the selector detects that the corresponding channel is ready for reading, has reached end-of-stream, has been remotely shut down for further reading, or has an error pending, then it will add OP_READ to the key's ready-operation set and add the key to its selected-key set. |
+| Write | SelectionKey.OP_WRITE | Suppose that a selection key's interest set contains OP_WRITE at the start of a selection operation. If the selector detects that the corresponding channel is ready for writing, has been remotely shut down for further writing, or has an error pending, then it will add OP_WRITE to the key's ready set and add the key to its selected-key set. |
 
 Можно указывать сразу несколько событий одновременно:
 ```java
