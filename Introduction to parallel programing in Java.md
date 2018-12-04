@@ -213,7 +213,7 @@ monitor account {
 //  Производитель
 public  synchronized  void  set(Object  data)  throws  InterruptedException  {
     if (this.data !=  null)  {
-        wait();//  Пассивное  ожидание
+        wait(); //  Пассивное  ожидание
     }
 
     this.data =  data;
@@ -224,7 +224,7 @@ public  synchronized  void  set(Object  data)  throws  InterruptedException  {
 //  Потребитель
 public  synchronized  Object  get()  throws  InterruptedException  {
     if  (data  ==  null)  {
-        wait();//  Пассивное  ожидание
+        wait(); //  Пассивное  ожидание
     }
 
     Object  d  =  data;
