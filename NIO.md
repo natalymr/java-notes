@@ -183,6 +183,7 @@ SelectionKey key = channel.register(selector, SelectionKey.OP_READ);
 какое именно событие вас интересует слушать у Channel-а через Selector.
 
 Какие бывают события-interest_set?
+
 | Событие | коректное написание | Oracle документация | 
 |---------|---------------------|---------------------|
 | Connect | SelectionKey.OP_CONNECT | Operation-set bit for socket-connect operations. Suppose that a selection key's interest set contains OP_CONNECT at the start of a selection operation. If the selector detects that the corresponding socket channel is ready to complete its connection sequence, or has an error pending, then it will add OP_CONNECT to the key's ready set and add the key to its selected-key set. |
